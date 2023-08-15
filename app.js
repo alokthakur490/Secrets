@@ -5,9 +5,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
-// const bcrypt = require('bcrypt');
-// const saltRounds = 10;
-
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
@@ -137,16 +134,19 @@ app.get( '/auth/google/callback',
 
 
 app.get("/secrets", function(req, res){
+ console.log(req.user.id);
+ User.findById(req.user.id).then(function(foundUsers){
+  console.log(foundUsers.secret);
+  res.render("secrets", {secretse: foundUsers.secret});
+  
+  });
+}
 
-  User.find({"secret": {$ne: null}}).then( function(foundUsers){
-        res.render("secrets", {userswithsecrets: foundUsers});
-      }
-    
-  )
 
 
 
-});
+
+);
 
 app.get("/submit", function(req, res){
   if (req.isAuthenticated()){
@@ -189,25 +189,12 @@ User.register({username :req.body.username},req.body.password).then(function(use
     res.redirect("/register");
   }else{
     passport.authenticate("local")(req,res,function(){
-      res.redirect("/secrets");
+      res.redirect("/submit");
     })
   }
   }
 )
 
-
-//   bcrypt.hash(req.body.password, saltRounds).then( function(hash) {
-//     // Store hash in your password DB.
-//     //console.log(hash);
-//     const newuser = new User({
-//       username : req.body.username,
-//       password : hash
-//       });
-  
-//       newuser.save();
-//       res.render("secrets");
-// });
-    
 })
 
 
@@ -233,16 +220,6 @@ app.post("/login" ,function(req, res){
 
          
 
-  // User.findOne({Username : Username}).then(function(obj){
-
-  //   bcrypt.compare(password, obj.password).then( function(result) {
-  //     if(result === true){
-  //       res.render("secrets");
-  //     } else{
-  //       res.send("<h1>TRY AGAIN</h1>");
-  //     }
-  // }); 
-  // })
 })
 app.get("/logout", function(req, res, next) {
   req.logout(function(err) {
