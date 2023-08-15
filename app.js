@@ -34,7 +34,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://127.0.0.1/UsersDB")
+mongoose.connect("mongodb+srv://thakuralok490:thakuralok-490@cluster0.1prvmml.mongodb.net/UsersDB")
 //mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
